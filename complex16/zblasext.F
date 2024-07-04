@@ -315,15 +315,33 @@ c
 c****************************************************************************
 c 
       
-      complex*16 function pzdotc(n, x , incx, y, incy)
-      implicit none
-      integer n, incx, incy
-      complex*16 x(*),y(*)
-      complex*16 wzdotc
-      external wzdotc
-
-      pzdotc = wzdotc(n, x , incx, y, incy)    
-      end
+      COMPLEX*16 FUNCTION pzdotc(N,ZX,INCX,ZY,INCY)
+          INTEGER INCX,INCY,N
+          COMPLEX*16 ZX(*),ZY(*)
+          COMPLEX*16 ZTEMP
+          INTEGER I,IX,IY
+          INTRINSIC dconjg
+          ztemp = (0.0d0,0.0d0)
+          pzdotc = (0.0d0,0.0d0)
+          IF (n.LE.0) RETURN
+          IF (incx.EQ.1 .AND. incy.EQ.1) THEN
+             DO i = 1,n
+                ztemp = ztemp + dconjg(zx(i))*zy(i)
+             END DO
+          ELSE
+             ix = 1
+             iy = 1
+             IF (incx.LT.0) ix = (-n+1)*incx + 1
+             IF (incy.LT.0) iy = (-n+1)*incy + 1
+             DO i = 1,n
+                ztemp = ztemp + dconjg(zx(ix))*zy(iy)
+             ix = ix + incx
+             iy = iy + incy
+          END DO
+       END IF
+       pzdotc = ztemp
+       RETURN
+      END
 
       complex*16 function pzdotu(n, x , incx, y, incy)
       implicit none
